@@ -1,4 +1,5 @@
 import PyPDF4
+import json
 
 pdfFile = open('javadoc.pdf', 'rb')
 
@@ -7,6 +8,8 @@ pdfReader = PyPDF4.pdf.PdfFileReader(pdfFile)
 o = pdfReader.getOutlines()
 
 # 判断是否是汉字
+
+
 def is_chinese(uchar):
     if uchar >= u'\u4e00' and uchar <= u'\u9fa5':
         return True
@@ -37,9 +40,15 @@ def loop_get_title(o):
             # 循环
             loop_get_title(item)
 
-
+# 首次调用循环方法
 loop_get_title(o)
+pdfFile.close()
 
 print("目录:", menu_list)
 
-pdfFile.close()
+# pdf的目录有很多不规整的地方，部分地方开发者手工处理了，存在此文件夹下的filename_save文件中，如果你想要重新生成，就调用下面这个生成函数
+def create_title_json():
+    with open('filename.json', 'w', encoding="utf-8") as f:
+        f.write(json.dumps(menu_list, ensure_ascii=False))
+        f.close()
+
